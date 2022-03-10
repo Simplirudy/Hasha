@@ -30,6 +30,8 @@ public class WaveSpawner : MonoBehaviour
         }
 
         fCountdown -= Time.deltaTime;
+        fCountdown = fCountdown < 0 ? 0 : fCountdown;
+
         WaveCountdownText.text = Mathf.Floor(fCountdown).ToString();
     }
 
