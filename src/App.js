@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { ethers, Wallet, providers } from 'ethers';
 import Moralis from 'moralis/dist/moralis.min.js';
+import { sequence } from '0xsequence';
 import { connect } from '@textile/tableland';
 
 // Redux
@@ -40,6 +41,16 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
+} from '@chakra-ui/react';
+
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 
 // Pages
@@ -104,27 +115,36 @@ export default function App() {
   const [usersTable, setUsersTable] = useState('hasha_users_1_337'); // hasha_users_1_288
   const [allUsers, setAllUsers] = useState([]);
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [sequenceUser, setSequenceUser] = useState('');
+  let sequenceWallet;
+  let connectDetails;
+
+  // check active Sequence connection
   useEffect(() => {
     // Initialise
     //createUsersTable();
     // change in App, Players, Signup
 
-    if (user) {
-      signIn(user.get('ethAddress'));
+    if (localStorage.getItem('WALLET_ADDRESS')) {
+      signIn(localStorage.getItem('WALLET_ADDRESS'));
+    } else {
+      navigate('/connect');
     }
   }, []);
-
-  useEffect(() => {
-    console.log('account state', account);
-  }, [account]);
 
   async function signIn(walletAddress) {
     const queriedUser = await queryUser(usersTable, walletAddress);
 
     dispatch(setWallet(walletAddress));
 
+    console.log('dispatching');
+
+    console.log('queriedUser', queriedUser);
+
     // check if account exists
-    if (queriedUser.length > 0) {
+    if (queriedUser && queriedUser.length > 0) {
       dispatch(
         setAccount({
           id: queriedUser[0][0],
@@ -138,93 +158,116 @@ export default function App() {
           losses: queriedUser[0][8],
         })
       );
-
       navigate('/home');
     } else {
       navigate('/signup');
     }
   }
 
-  async function connectWallet() {
-    if (!user) {
-      user = await Moralis.authenticate({ signingMessage: 'Log into Hasha' })
-        .then(async (user) => {
-          signIn(user.get('ethAddress'));
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
-  }
+  useEffect(() => {
+    console.log('account state', account);
+  }, [account]);
 
-  async function disconnectWallet() {
+  async function disconnectWallets() {
     await Moralis.User.logOut();
-    dispatch(setWallet(''));
+    sequenceWallet = new sequence.Wallet('polygon');
+    sequenceWallet.disconnect();
+
+    dispatch(setWallet(null));
     dispatch(setAccount(null));
-    navigate('/');
+    setSequenceUser('');
+    localStorage.removeItem('WALLET_ADDRESS');
+    navigate('/connect');
   }
 
   return (
     <>
-      {account && (
-        <header>
-          <div className="flex items-end space-x-10">
-            <h1 className="text-4xl">
-              <NavLink to="home">Hasha</NavLink>
-            </h1>
-            <nav className="space-x-3 text-xl font-semibold">
-              <NavLink
-                to="home"
-                className={({ isActive }) =>
-                  isActive ? 'font-bold underline' : undefined
-                }
-              >
-                Home
-              </NavLink>
-              <NavLink
-                to="play"
-                className={({ isActive }) =>
-                  isActive ? 'font-bold underline' : undefined
-                }
-              >
-                PLAY
-              </NavLink>
-              <NavLink
-                to="players"
-                className={({ isActive }) =>
-                  isActive ? 'font-bold underline' : undefined
-                }
-              >
-                Players
-              </NavLink>
-            </nav>
-          </div>
+      <header>
+        <div className="flex items-end space-x-10">
+          <h1 className="text-4xl">
+            <NavLink to="home">Hasha</NavLink>
+          </h1>
+          <nav className="space-x-3 text-xl font-semibold">
+            <NavLink
+              to="home"
+              className={({ isActive }) =>
+                isActive ? 'font-bold underline' : undefined
+              }
+            >
+              Home
+            </NavLink>
+            <NavLink
+              to="play"
+              className={({ isActive }) =>
+                isActive ? 'font-bold underline' : undefined
+              }
+            >
+              PLAY
+            </NavLink>
+            <NavLink
+              to="players"
+              className={({ isActive }) =>
+                isActive ? 'font-bold underline' : undefined
+              }
+            >
+              Players
+            </NavLink>
+          </nav>
+        </div>
 
-          <div className="space-x-5">
-            <span>{account.username}</span>
-            {!user ? (
-              <Button onClick={connectWallet}>Connect Wallet</Button>
-            ) : (
-              <>
-                <Button onClick={disconnectWallet}>Disconnect</Button>
-              </>
-            )}
-          </div>
-        </header>
-      )}
+        <div className="space-x-5">
+          <span>{account && account.username}</span>
+          {/*user && <Button onClick={disconnectWallet}>Disconnect</Button>*/}
+
+          {/*sequenceUser && <Button onClick={openSequence}>Sequence</Button> */}
+          {/* {sequenceUser && (
+            <Button onClick={disconnectSequence}>Disconnect</Button>
+          )} */}
+
+          {wallet && <Button onClick={disconnectWallets}>Disconnect</Button>}
+        </div>
+      </header>
+
       <main>
-        {!user && (
-          <div className="flex h-screen">
-            <div className="m-auto text-center space-y-5">
-              <h2 className="text-4xl font-semibold">Hasha</h2>
-              <div>
-                <Button w={40} onClick={connectWallet}>
-                  Connect Wallet
-                </Button>
+        {/* !user &&
+          (!sequenceUser && (
+            <div className="flex h-screen">
+              <div className="m-auto text-center space-y-5">
+                <h2 className="text-4xl font-semibold">Hasha</h2>
+                <div>
+                  <Button w={40} onClick={onOpen}>
+                    Connect Wallet
+                  </Button>
+                  <Modal isOpen={isOpen} onClose={onClose} isCentered>
+                    <ModalOverlay overflowY="scroll" />
+                    <ModalContent className="py-10">
+                      <ModalHeader>Connect your wallet</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody className="space-y-10">
+                        <Button
+                          width="100%"
+                          h={40}
+                          colorScheme="orange"
+                          onClick={connectWallet}
+                        >
+                          MetaMask
+                        </Button>
+                        <Button
+                          width="100%"
+                          h={40}
+                          colorScheme="blue"
+                          backgroundColor="blue.800"
+                          onClick={connectSequence}
+                        >
+                          Sequence
+                        </Button>
+                      </ModalBody>
+                    </ModalContent>
+                  </Modal>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )) */}
         <Outlet />
       </main>
     </>

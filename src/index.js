@@ -20,6 +20,7 @@ import Home from './pages/Home';
 import Signup from './pages/Signup';
 import Play from './pages/Play';
 import Players from './pages/Players';
+import Connect from './pages/Connect';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -33,6 +34,7 @@ ReactDOM.render(
                 <Route path="signup" element={<Signup />} />
                 <Route path="play" element={<Play />} />
                 <Route path="players" element={<Players />} />
+                <Route path="connect" element={<Connect />} />
               </Route>
             </Routes>
           </ChakraProvider>

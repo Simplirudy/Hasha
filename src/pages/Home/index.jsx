@@ -1,6 +1,7 @@
 // Redux
 import { useSelector } from 'react-redux';
 import { accountState } from '../../state/account/accountSlice';
+import { walletState } from '../../state/wallet/walletSlice';
 
 // React Router
 import { useNavigate, Link } from 'react-router-dom';
@@ -10,14 +11,20 @@ import { useEffect } from 'react';
 
 export default function Home() {
   const account = useSelector(accountState);
+  const wallet = useSelector(walletState);
   const navigate = useNavigate();
 
   useEffect(() => {
     console.log(account);
-    if (!account) {
+
+    if (!wallet) {
+      navigate('/connect');
+    } else if (!account) {
       navigate('/');
     }
-  }, []);
+  });
+
+  if (!account) return null;
 
   return (
     <div className="flex justify-between mx-auto w-1/2">

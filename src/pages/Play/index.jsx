@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 
+import { useNavigate } from 'react-router-dom';
+
 // Redux
 import { useSelector } from 'react-redux';
 import { accountState } from '../../state/account/accountSlice';
+import { walletState } from '../../state/wallet/walletSlice';
 
 import { Helmet } from 'react-helmet-async';
 
@@ -18,6 +21,18 @@ const divStyle = {
 
 export default function Play() {
   const account = useSelector(accountState);
+  const wallet = useSelector(walletState);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log(account);
+
+    if (!wallet) {
+      navigate('/connect');
+    } else if (!account) {
+      navigate('/');
+    }
+  });
 
   return (
     <>
