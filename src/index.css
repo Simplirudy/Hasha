@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-800;
+  }
+
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+
+  header nav a {
+    @apply text-gray-300 hover:text-white;
+  }
+}
+
+@font-face {
+  font-family: 'Eurostile';
+  src: url('./fonts/EurostileBold.ttf') format('truetype');
+}
+
+body {
+  font-family: 'Eurostile' !important;
+  background-color: #202020 !important; /* bg-gray-900 */
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.centered {
+  display: flex;
+  height: 90vh;
+  margin: auto;
+}

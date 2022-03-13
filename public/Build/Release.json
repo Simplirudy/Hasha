@@ -1,0 +1,16 @@
+{
+"companyName": "Coder100",
+"productName": "CubeDash",
+"productVersion": "0.1",
+"dataUrl": "Release.data.unityweb",
+"wasmCodeUrl": "Release.wasm.code.unityweb",
+"wasmFrameworkUrl": "Release.wasm.framework.unityweb",
+"graphicsAPI": ["WebGL 2.0","WebGL 1.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Dark",
+"backgroundColor": "#000000",
+"cacheControl": {"default": "must-revalidate"},
+"developmentBuild": false,
+"multithreading": false,
+"unityVersion": "2019.3.13f1"
+}
