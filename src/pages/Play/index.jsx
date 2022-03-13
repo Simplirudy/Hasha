@@ -7,10 +7,19 @@ import { useSelector } from 'react-redux';
 import { accountState } from '../../state/account/accountSlice';
 import { walletState } from '../../state/wallet/walletSlice';
 
+// Unity
+import Unity, { UnityContext } from 'react-unity-webgl';
 import { Helmet } from 'react-helmet-async';
 
 // Components
 import { Button } from '@chakra-ui/react';
+
+const unityContext = new UnityContext({
+  loaderUrl: 'Build/Build.loader.js',
+  dataUrl: 'Build/Build.data',
+  frameworkUrl: 'Build/Build.framework.js',
+  codeUrl: 'Build/Build.wasm',
+});
 
 const divStyle = {
   // position: 'absolute',
@@ -34,15 +43,36 @@ export default function Play() {
     }
   });
 
+  // pass down wallet address and username to game
+  useEffect(() => {
+    unityContext.on('loaded', () => {
+      setTimeout(() => {
+        unityContext.send('Canvas', 'SetUserName', account.username);
+        unityContext.send('Canvas', 'SetWalletAddress', account.wallet);
+      }, 5000);
+    });
+  }, []);
+
   return (
-    <>
-      <Helmet>
-        <script src="Build/UnityLoader.js"></script>
+    <div style={divStyle}>
+      <Unity unityContext={unityContext} style={divStyle} />
+      <Button
+        className="mt-5"
+        colorScheme="blue"
+        onClick={() => unityContext.setFullscreen(true)}
+      >
+        Fullscreen
+      </Button>
+    </div>
+  );
+}
+
+{
+  /* 
+<script src="Build/UnityLoader.js"></script>
         <script>
           UnityLoader.instantiate("unityContainer", "Build/Release.json");
         </script>
-      </Helmet>
-      <div id="unityContainer" style={divStyle}></div>
-    </>
-  );
+
+*/
 }

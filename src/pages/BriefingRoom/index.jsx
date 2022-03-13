@@ -23,11 +23,18 @@ import {
 export default function BriefingRoom() {
   return (
     <div className="pt-40">
+      {/*<img src="/img/alert.png" alt="Access denied" className="mx-auto" />*/}
+      <embed
+        type="text/html"
+        src="https://app.submarine.me/rWMXG6gN2b2Lu12W1iQVRB"
+        width="100%"
+        height="600px"
+      />
       <div className="space-y-3">
+        {/*<div className="bg-gray-800 w-100 h-20 rounded"></div>
         <div className="bg-gray-800 w-100 h-20 rounded"></div>
         <div className="bg-gray-800 w-100 h-20 rounded"></div>
-        <div className="bg-gray-800 w-100 h-20 rounded"></div>
-        <div className="bg-gray-800 w-100 h-20 rounded"></div>
+  <div className="bg-gray-800 w-100 h-20 rounded"></div>*/}
       </div>
     </div>
   );

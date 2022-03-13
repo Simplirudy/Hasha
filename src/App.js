@@ -9,6 +9,7 @@ import { connect } from '@textile/tableland';
 import { useSelector, useDispatch } from 'react-redux';
 import { walletState, setWallet } from './state/wallet/walletSlice';
 import { accountState, setAccount } from './state/account/accountSlice';
+import { tableState } from './state/table/tableSlice';
 
 import { useNavigate, useLocation, Outlet, NavLink } from 'react-router-dom';
 
@@ -69,9 +70,6 @@ const appId = 'EgmGxeeT90BC5nWgvfejq80MScVfmfCplq0z98CF';
 Moralis.start({ serverUrl, appId });
 
 // Create Tableland Table - this would be performed once like in a initialization function
-
-function tableLand() {}
-
 async function createUsersTable() {
   const privateKey =
     'b4438df26e4c7369368fe58f721d7e2f985e9915bd80091e9bcdeffc22107932';
@@ -94,8 +92,8 @@ async function createUsersTable() {
         xp int2,
         games_played int,
         wins int4,
-        losses int4);`
-    // avatar text
+        losses int4,
+        avatar text);`
   );
 
   // id int, primary key(id));`
@@ -112,13 +110,14 @@ export default function App() {
   const dispatch = useDispatch();
   const wallet = useSelector(walletState);
   const account = useSelector(accountState);
+  const tableId = useSelector(tableState);
 
   // React Router
   const navigate = useNavigate();
   const location = useLocation();
 
   const [player, setPlayer] = useState({});
-  const [usersTable, setUsersTable] = useState('hasha_users_1_337'); // hasha_users_1_288
+  const [usersTable, setUsersTable] = useState(tableId); // hasha_users_1_337 OLD with 5 accounts
   const [allUsers, setAllUsers] = useState([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -131,7 +130,6 @@ export default function App() {
   useEffect(() => {
     // Initialise
     //createUsersTable();
-    // change in App, Players, Signup
 
     if (localStorage.getItem('WALLET_ADDRESS')) {
       signIn(localStorage.getItem('WALLET_ADDRESS'));
@@ -162,6 +160,7 @@ export default function App() {
           games_played: queriedUser[0][6],
           wins: queriedUser[0][7],
           losses: queriedUser[0][8],
+          avatar: queriedUser[0][9],
         })
       );
       navigate('/home');
@@ -186,9 +185,17 @@ export default function App() {
     navigate('/connect');
   }
 
+  async function openWallet() {
+    sequenceWallet = new sequence.Wallet('polygon');
+    sequenceWallet.connect({
+      app: 'Hasha',
+    });
+    sequenceWallet.openWallet();
+  }
+
   return (
     <>
-      <div className="p-5 flex flex-col min-h-screen bg-gray-900 text-white overflow-hidden">
+      <div className="p-5 flex flex-col min-h-screen  text-white overflow-hidden">
         <header>
           <div className="flex items-center space-x-10">
             <h1 className="font-bold">
@@ -250,14 +257,19 @@ export default function App() {
             {account && (
               <>
                 <span>{account && account.username}</span>
-                <Avatar name="John Smith" src="/img/hasha-logo.png" />
+                <Avatar name="John Smith" src={account.avatar} />
               </>
             )}
 
             {wallet && (
-              <Button colorScheme="red" onClick={disconnectWallets}>
-                Disconnect
-              </Button>
+              <>
+                <Button colorScheme="teal" onClick={openWallet}>
+                  Wallet
+                </Button>
+                <Button colorScheme="red" onClick={disconnectWallets}>
+                  Disconnect
+                </Button>
+              </>
             )}
           </div>
         </header>

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 
 // Redux
-import { useSelector } from 'react-redux';
-import { accountState } from '../../state/account/accountSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { setAccount, accountState } from '../../state/account/accountSlice';
 import { walletState } from '../../state/wallet/walletSlice';
+import { tableState } from '../../state/table/tableSlice';
 
 // React Router
 import { useNavigate, Link } from 'react-router-dom';
@@ -40,8 +41,12 @@ import { useEffect } from 'react';
 const mime = require('mime-types');
 
 export default function Home() {
+  // Redux
+  const dispatch = useDispatch();
   const account = useSelector(accountState);
   const wallet = useSelector(walletState);
+  const tableId = useSelector(tableState);
+
   const navigate = useNavigate();
 
   const [nfts, setNfts] = useState([]);
@@ -76,34 +81,30 @@ export default function Home() {
     setNfts(data.nfts);
   }
 
-  async function queryUser(tableName, USER_ADDRESS) {
-    try {
-      const privateKey =
-        'b4438df26e4c7369368fe58f721d7e2f985e9915bd80091e9bcdeffc22107932';
-      const wallet = new Wallet(privateKey);
+  async function changeAvatar(tableName, nftLink) {
+    const privateKey = process.env.REACT_APP_WALLET_PRIVATE_KEY;
+    const wallet = new Wallet(privateKey);
 
-      const provider = new providers.AlchemyProvider(
-        'rinkeby',
-        `K_Xt9OWBDy2ZXJyBVbBRmAlMLErENrkP`
-      );
+    const provider = new providers.AlchemyProvider(
+      'rinkeby',
+      `K_Xt9OWBDy2ZXJyBVbBRmAlMLErENrkP`
+    );
 
-      const signer = wallet.connect(provider);
-      const tbl = await connect({ network: 'testnet', signer });
+    const signer = wallet.connect(provider);
+    const tbl = await connect({ network: 'testnet', signer });
 
-      // Read user data
-      const {
-        data: { rows, columns },
-      } = await tbl.query(
-        `SELECT * FROM ${tableName} WHERE ADDRESS = '${USER_ADDRESS}';`
-      );
+    const response = await tbl.query(
+      `UPDATE ${tableName} SET avatar = '${nftLink}' WHERE ADDRESS = '${account.wallet}';`
+    );
 
-      return rows;
-    } catch (err) {
-      console.log(err);
-    }
+    //window.location.reload();
+    dispatch(
+      setAccount({
+        ...account,
+        avatar: nftLink,
+      })
+    );
   }
-
-  async function changeAvatar() {}
 
   if (!account) return null;
 
@@ -114,7 +115,7 @@ export default function Home() {
           width="300px"
           height="300px"
           name="John Smith"
-          src="/img/hasha-logo.png"
+          src={account.avatar}
           className="mx-auto"
         />
         <Box className="text-center">
@@ -129,7 +130,20 @@ export default function Home() {
               <PopoverArrow />
               <PopoverCloseButton />
               <PopoverBody>
-                <div className="grid grid-cols-3">
+                <div className="grid grid-cols-3 space-x-10">
+                  <div>
+                    <button
+                      onClick={() =>
+                        changeAvatar(tableId, '/img/avatar/default.png')
+                      }
+                    >
+                      <Avatar
+                        size="2xl"
+                        src={`/img/avatar/default.png`}
+                        alt="default avatar"
+                      />
+                    </button>
+                  </div>
                   {nfts.map((nft, idx) => {
                     const mimeType = mime.lookup(nft.file_url);
 
@@ -144,7 +158,9 @@ export default function Home() {
                       }
                       return (
                         <div key={idx}>
-                          <button onClick={() => changeAvatar(nft.file_url)}>
+                          <button
+                            onClick={() => changeAvatar(tableId, nft.file_url)}
+                          >
                             <Avatar
                               size="2xl"
                               src={`${nft.file_url}`}

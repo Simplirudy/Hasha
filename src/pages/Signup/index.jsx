@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { walletState } from '../../state/wallet/walletSlice';
+import { tableState } from '../../state/table/tableSlice';
 
 import { ethers, Wallet, providers } from 'ethers';
 import Moralis from 'moralis/dist/moralis.min.js';
@@ -12,6 +13,8 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Signup() {
   const wallet = useSelector(walletState);
+  const tableId = useSelector(tableState);
+
   const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
@@ -31,7 +34,7 @@ export default function Signup() {
     console.log('user Info', user);
 
     const userResponse = await tbl.query(
-      `INSERT INTO ${tableName} (username, address, registered, level, xp, games_played, wins, losses) VALUES ('${user.username}', '${user.address}', '${user.registered}', ${user.level}, ${user.xp}, ${user.games_played}, ${user.wins}, ${user.losses});`
+      `INSERT INTO ${tableName} (username, address, registered, level, xp, games_played, wins, losses, avatar) VALUES ('${user.username}', '${user.address}', '${user.registered}', ${user.level}, ${user.xp}, ${user.games_played}, ${user.wins}, ${user.losses}, '${user.avatar}');`
     );
 
     navigate('/');
@@ -44,7 +47,7 @@ export default function Signup() {
     const username = e.target[0].value;
     const wallet = e.target[1].value;
 
-    await createUser('hasha_users_1_337', {
+    await createUser(tableId, {
       username: username,
       address: wallet,
       // registered: new Date().toString(),
@@ -54,6 +57,7 @@ export default function Signup() {
       games_played: 0,
       wins: 0,
       losses: 0,
+      avatar: '/img/avatar/default.png',
     });
   }
 
@@ -73,7 +77,7 @@ export default function Signup() {
               />
               <Text my="8px">Wallet Address</Text>
               <Input value={wallet} isRequired isDisabled />
-              <Button my="8px" type="submit">
+              <Button colorScheme="blue" my="8px" type="submit">
                 Sign Up
               </Button>
             </form>

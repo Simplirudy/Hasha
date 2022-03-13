@@ -8,6 +8,7 @@ import { sequence } from '0xsequence';
 import { useSelector, useDispatch } from 'react-redux';
 import { walletState, setWallet } from '../../state/wallet/walletSlice';
 import { accountState, setAccount } from '../../state/account/accountSlice';
+import { tableState } from '../../state/table/tableSlice';
 
 import { useNavigate, Outlet, NavLink } from 'react-router-dom';
 
@@ -36,13 +37,14 @@ export default function Connect() {
   const dispatch = useDispatch();
   const wallet = useSelector(walletState);
   const account = useSelector(accountState);
+  const tableId = useSelector(tableState);
 
   // React Router
   const navigate = useNavigate();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [usersTable, setUsersTable] = useState('hasha_users_1_337');
+  const [usersTable, setUsersTable] = useState(tableId);
 
   useEffect(() => {
     if (!wallet) {
@@ -117,12 +119,9 @@ export default function Connect() {
       <div className="m-auto flex flex-col sm:flex-row items-center">
         {/*<h2 className="text-4xl font-semibold">Hasha</h2>*/}
 
-        <div className="space-y-20 pl-20">
-          <h2 className="text-4xl font-bold italic tracking-widest">HASHA</h2>
-          <p className="text-4xl">
-            The <span className="text-red-500 font-bold">first</span> Web3 tower
-            defense game.
-          </p>
+        <div className="space-y-10 pl-20">
+          <h2 className="text-6xl font-bold italic">H A S H A</h2>
+          <p className="text-3xl">Fight for Intergalactic Domination</p>
           <Button
             colorScheme="red"
             className="tracking-widest"
@@ -132,6 +131,7 @@ export default function Connect() {
           >
             PLAY NOW
           </Button>
+          <p className="text-3xl">Which Side Will YOU Choose?</p>
           <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent className="py-10">

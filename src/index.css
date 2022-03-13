@@ -26,6 +26,7 @@
 
 body {
   font-family: 'Eurostile' !important;
+  background-color: #202020 !important; /* bg-gray-900 */
 }
 
 header {

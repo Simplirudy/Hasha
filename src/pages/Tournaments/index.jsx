@@ -23,11 +23,12 @@ import {
 export default function Tournaments() {
   return (
     <div className="pt-40">
+      <img src="/img/denied.png" alt="Access denied" className="mx-auto" />
       <div className="space-y-3">
+        {/*<div className="bg-gray-800 w-100 h-20 rounded"></div>
         <div className="bg-gray-800 w-100 h-20 rounded"></div>
         <div className="bg-gray-800 w-100 h-20 rounded"></div>
-        <div className="bg-gray-800 w-100 h-20 rounded"></div>
-        <div className="bg-gray-800 w-100 h-20 rounded"></div>
+  <div className="bg-gray-800 w-100 h-20 rounded"></div>*/}
       </div>
     </div>
   );
