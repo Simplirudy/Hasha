@@ -113,17 +113,30 @@ export default function Connect() {
   }
 
   return (
-    <div className="flex h-screen">
-      <div className="m-auto text-center space-y-5">
+    <div className="centered">
+      <div className="m-auto flex flex-col sm:flex-row items-center">
         {/*<h2 className="text-4xl font-semibold">Hasha</h2>*/}
-        <div>
-          <Button w={40} onClick={onOpen}>
-            Connect Wallet
+
+        <div className="space-y-20 pl-20">
+          <h2 className="text-4xl font-bold italic tracking-widest">HASHA</h2>
+          <p className="text-4xl">
+            The <span className="text-red-500 font-bold">first</span> Web3 tower
+            defense game.
+          </p>
+          <Button
+            colorScheme="red"
+            className="tracking-widest"
+            w={40}
+            onClick={onOpen}
+            size="lg"
+          >
+            PLAY NOW
           </Button>
           <Modal isOpen={isOpen} onClose={onClose} isCentered>
-            <ModalOverlay overflowY="scroll" />
+            <ModalOverlay />
             <ModalContent className="py-10">
               <ModalCloseButton />
+              <ModalHeader>Connect Your Wallet</ModalHeader>
               <ModalBody className="space-y-10">
                 <Button
                   width="100%"
@@ -146,6 +159,11 @@ export default function Connect() {
             </ModalContent>
           </Modal>
         </div>
+        <img
+          src="/img/banner.png"
+          alt="Hasha logo"
+          className="overflow-hidden"
+        />
       </div>
     </div>
   );

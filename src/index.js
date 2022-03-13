@@ -19,7 +19,11 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import Home from './pages/Home';
 import Signup from './pages/Signup';
 import Play from './pages/Play';
-import Players from './pages/Players';
+import Inventory from './pages/Inventory';
+import Leaderboard from './pages/Leaderboard';
+import Tournaments from './pages/Tournaments';
+import BriefingRoom from './pages/BriefingRoom';
+import SimulationRoom from './pages/SimulationRoom';
 import Connect from './pages/Connect';
 
 ReactDOM.render(
@@ -33,7 +37,11 @@ ReactDOM.render(
                 <Route path="home" element={<Home />} />
                 <Route path="signup" element={<Signup />} />
                 <Route path="play" element={<Play />} />
-                <Route path="players" element={<Players />} />
+                <Route path="inventory" element={<Inventory />} />
+                <Route path="leaderboard" element={<Leaderboard />} />
+                <Route path="tournaments" element={<Tournaments />} />
+                <Route path="briefingroom" element={<BriefingRoom />} />
+                <Route path="simulationroom" element={<SimulationRoom />} />
                 <Route path="connect" element={<Connect />} />
               </Route>
             </Routes>
